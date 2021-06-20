@@ -1,36 +1,36 @@
-package com.example.unsplash
+package com.example.unsplash.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.unsplash.UnsplashViewModelFactory
 import com.example.unsplash.adapter.UnsplashAdapter
+import com.example.unsplash.databinding.ActivityMainBinding
 import com.example.unsplash.repo.UnsplashRepo
 import com.example.unsplash.utils.Resource
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var unsplashViewModel: UnsplashViewModel
     private lateinit var unsplashAdapter: UnsplashAdapter
-    private var pageSize: Int = 8
-    private var page: Int = 1
-    val name = "ONO"
+    private lateinit var binding: ActivityMainBinding
+    private var pageSize: Int = 30
     var isLoading: Boolean = false
     var isLastpage: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val repo = UnsplashRepo()
         val viewModelProviderFactory = UnsplashViewModelFactory(application,repo)
         unsplashViewModel =
             ViewModelProvider(this, viewModelProviderFactory).get(UnsplashViewModel::class.java)
-        unsplashViewModel.getImageres(unsplashViewModel.ImagePage, pageSize)
+        unsplashViewModel.getImageres(unsplashViewModel.imagePage, pageSize)
 
         subscribeToObservers()
         setrecylerView()
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setrecylerView() {
         unsplashAdapter = UnsplashAdapter()
-        recylerview.apply {
+        binding.recylerview.apply {
             adapter = unsplashAdapter
             layoutManager = GridLayoutManager(this@MainActivity, 2)
             addOnScrollListener(scrollListener)
@@ -64,11 +64,7 @@ class MainActivity : AppCompatActivity() {
             val isTotalMoreThanVisible = totalItemcount >= pageSize
             val shouldPaginate = isNotLoadingAndNotLastPage && isAtLastItem && isNotAtTheBeginning && isTotalMoreThanVisible
             if(shouldPaginate){
-                page++
-//                unsplashViewModel.ImagePage++
-                Log.d(name,"view ${unsplashViewModel.ImagePage}")
-                Log.d(name,"$page")
-                unsplashViewModel.getImageres(unsplashViewModel.ImagePage,pageSize)
+                unsplashViewModel.getImageres(unsplashViewModel.imagePage,pageSize)
             }
         }
     }
@@ -84,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                             isLastpage = it.size<pageSize
                         }else isLastpage = true
                         if(isLastpage){
-                            recylerview.setPadding(0,0,0,0)
+                            binding.recylerview.setPadding(0,0,0,0)
                         }
                     }
 
@@ -103,12 +99,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showProgressBar() {
-        paginationProgressBar.visibility = View.VISIBLE
+        binding.paginationProgressBar.visibility = View.VISIBLE
         isLoading = true
     }
 
     private fun hideProgressBar() {
-        paginationProgressBar.visibility = View.INVISIBLE
+        binding.paginationProgressBar.visibility = View.INVISIBLE
         isLoading = false
     }
 }
