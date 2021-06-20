@@ -1,11 +1,15 @@
 package com.example.unsplash.adapter
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.unsplash.R
 import com.example.unsplash.modal.UrlModal
+import kotlinx.android.synthetic.main.image_url_item.view.*
 
 class UnsplashAdapter:RecyclerView.Adapter<UnsplashAdapter.ImageViewHolder>() {
     inner class ImageViewHolder (itemView: View):RecyclerView.ViewHolder(itemView)
@@ -22,11 +26,14 @@ class UnsplashAdapter:RecyclerView.Adapter<UnsplashAdapter.ImageViewHolder>() {
     val differ =AsyncListDiffer(this,differCallback)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        TODO("Not yet implemented")
+        return ImageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.image_url_item,parent,false))
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        val image =differ.currentList[position]
+        holder.itemView.apply {
+            Glide.with(this).load(image.urls.regular).into(imageView)
+        }
     }
 
     override fun getItemCount(): Int {

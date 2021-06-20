@@ -20,6 +20,9 @@ class UnsplashViewModel(val app: Application, val unsplashRepo: UnsplashRepo):An
     fun getImageres(page:Int,per_page:Int) = viewModelScope.launch {
         safefetch(page,per_page)
     }
+    init {
+        getImageres(1,30)
+    }
 
     private suspend fun safefetch(page: Int, perPage: Int) {
         getImage.postValue(Resource.Loading())
